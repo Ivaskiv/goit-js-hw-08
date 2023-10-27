@@ -30,9 +30,6 @@ const loadFromLocalStorage = () => {
   messageTextarea.value = savedDate.message || '';
 };
 
-//викликаємо функцію завантаження(load) під час завантаження сторінки
-window.addEventListener('load', loadFromLocalStorage);
-
 feedbackForm.addEventListener(
   'input',
   throttle(() => {
