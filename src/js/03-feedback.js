@@ -21,13 +21,11 @@ const feedbackForm = document.querySelector('.feedback-form');
 const emailInput = feedbackForm.querySelector("input[name='email']");
 const messageTextarea = feedbackForm.querySelector("textarea[name='message']");
 
-const formId = 'feedback-form-state'; //formId - ідентифікатор форми. 1.Нехай ключем для сховища буде рядок "feedback-form-state"
-
-emailInput.setAttribute('autocomplete', 'email');
+const FORM_ID = 'feedback-form-state'; //FORM_ID - ідентифікатор форми. 1.Нехай ключем для сховища буде рядок "feedback-form-state"
 
 //функція для завантаження даних з локального сховища
 const loadFromLocalStorage = () => {
-  const savedDate = JSON.parse(localStorage.getItem(formId)) || {};
+  const savedDate = JSON.parse(localStorage.getItem(FORM_ID)) || {};
   emailInput.value = savedDate.email || '';
   messageTextarea.value = savedDate.message || '';
 };
@@ -43,7 +41,7 @@ feedbackForm.addEventListener(
       email: emailInput.value,
       message: messageTextarea.value,
     };
-    localStorage.setItem(formId, JSON.stringify(feedbackData));
+    localStorage.setItem(FORM_ID, JSON.stringify(feedbackData));
   }, 500)
 );
 
@@ -63,8 +61,63 @@ feedbackForm.addEventListener('submit', event => {
   console.log(feedbackData);
 
   //очистити дані у локальному сховищі після відправки
-  localStorage.removeItem(formId);
+  localStorage.removeItem(FORM_ID);
+  //очистити поля форми
+  emailInput.value = messageTextarea.value = '';
 });
+
+//------------------II---------------------------
+
+// import throttle from 'lodash/throttle';
+
+// const feedbackForm = document.querySelector('.feedback-form');
+// const emailInput = feedbackForm.querySelector("input[name='email']");
+// const messageTextarea = feedbackForm.querySelector("textarea[name='message']");
+
+// const formId = 'feedback-form-state'; //formId - ідентифікатор форми. 1.Нехай ключем для сховища буде рядок "feedback-form-state"
+
+// emailInput.setAttribute('autocomplete', 'email');
+
+// //функція для завантаження даних з локального сховища
+// const loadFromLocalStorage = () => {
+//   const savedDate = JSON.parse(localStorage.getItem(formId)) || {};
+//   emailInput.value = savedDate.email || '';
+//   messageTextarea.value = savedDate.message || '';
+// };
+
+// //викликаємо функцію завантаження(load) під час завантаження сторінки
+// window.addEventListener('load', loadFromLocalStorage);
+
+// feedbackForm.addEventListener(
+//   'input',
+//   throttle(() => {
+//     // Збереження даних у локальному сховищі при кожній зміні
+//     const feedbackData = {
+//       email: emailInput.value,
+//       message: messageTextarea.value,
+//     };
+//     localStorage.setItem(formId, JSON.stringify(feedbackData));
+//   }, 500)
+// );
+
+// feedbackForm.addEventListener('submit', event => {
+//   event.preventDefault();
+
+//   //перевіряємо, чи поля заповнені перед відправкою
+//   if (!emailInput.value || !messageTextarea.value) {
+//     alert('Будь ласка 🙂, заповніть 🔤 всі поля форми ');
+//     return;
+//   }
+
+//   const feedbackData = {
+//     email: emailInput.value,
+//     message: messageTextarea.value,
+//   };
+//   console.log(feedbackData);
+
+//   //очистити дані у локальному сховищі після відправки
+//   localStorage.removeItem(formId);
+// });
 
 //------------------I---------------------------
 // import throttle from "lodash/throttle";
