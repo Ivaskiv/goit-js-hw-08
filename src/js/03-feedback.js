@@ -5,53 +5,58 @@
 //! 4. Зроби так, щоб сховище оновлювалось не частіше, ніж раз на 500 мілісекунд. Для цього додай до проекту і використовуй бібліотеку lodash.throttle.
 import throttle from 'lodash/throttle';
 
+const FORM_ID = 'feedback-form-state';
 const feedbackForm = document.querySelector('.feedback-form');
-const emailInput = feedbackForm.querySelector("input[name='email']");
-const messageTextarea = feedbackForm.querySelector("textarea[name='message']");
+const { email, message } = feedbackForm.elements;
+let feedbackData = JSON.parse(localStorage.getItem(FORM_ID)) || {};
 
-const FORM_ID = 'feedback-form-state'; 
-//функція для завантаження даних з локального сховища
-const loadFromLocalStorage = () => {
-  const savedDate = JSON.parse(localStorage.getItem(FORM_ID)) || {};
-  emailInput.value = savedDate.email || '';
-  messageTextarea.value = savedDate.message || '';
-};
+reloadPage();
 
-feedbackForm.addEventListener(
-  'input',
-  throttle(() => {
-    // Збереження даних у локальному сховищі при кожній зміні
-    if (emailInput.value || messageTextarea.value){
-      const feedbackData = {
-        email: emailInput.value,
-        message: messageTextarea.value,
-      };
-      localStorage.setItem(FORM_ID, JSON.stringify(feedbackData));
-    }
-  }, 500)
-);
-feedbackForm.addEventListener('submit', event => {
-  event.preventDefault();
-  //перевіряємо, чи поля заповнені перед відправкою
-  if (!emailInput.value || !messageTextarea.value) {
-    alert('Будь ласка 🙂, заповніть 🔤 всі поля форми ');
-    return;
-  }
-  const feedbackData = {
-    email: emailInput.value,
-    message: messageTextarea.value,
-  };
-  console.log(feedbackData);
-  //очистити дані у локальному сховищі після відправки
-  localStorage.removeItem(FORM_ID);
-  //очистити поля форми
-  emailInput.value = messageTextarea.value = '';
+window.addEventListener('load', () => {
+  const localStorageData = JSON.parse(localStorage.getItem(FORM_ID)) || {};
+  localStorageData.email && (email.value = localStorageData.email);
+  localStorageData.message && (message.value = localStorageData.message);
 });
+
+feedbackForm.addEventListener('input', throttle(onInputData, 500));
+feedbackForm.addEventListener('submit', onFormSubmit);
+function onInputData() {
+  // Якщо поля email або message заповнені, оновити об'єкт feedbackData
+  if (email.value || message.value) {
+    feedbackData = {
+      email: email.value,
+      message: message.value,
+    };
+    // Зберегти об'єкт feedbackData в локальному сховищі
+    localStorage.setItem(FORM_ID, JSON.stringify(feedbackData));
+  }
+}
+function onFormSubmit(event) {
+  event.preventDefault();
+  console.log(feedbackData);
+  if (!email.value || !message.value) {
+    alert('Будь ласка 🙂, заповніть 🔤 всі поля форми ');
+  } else {
+    // Видалити дані з локального сховища
+    localStorage.removeItem(FORM_ID);
+    // Очистити поля форми
+    email.value = '';
+    message.value = '';
+    // Оновити об'єкт feedbackData
+    feedbackData = {};
+  }
+}
+function reloadPage() {
+  if (feedbackData) {
+    email.value = feedbackData.email || '';
+    message.value = feedbackData.message || '';
+  }
+}
 
 //!ТЕОРІЯ
 // JSON.stringify() перетворення обєкта в рядок
 // const obj = {name: "John", age: 30, city: "New York"};
 // const myJSON = JSON.stringify(obj);
-// JSON.parse(), щоб перетворити текст на об’єкт JavaScript
+// JSON.parse(), щоб перетворити текст на об`єкт JavaScript
 //localStorage - це об'єкт веб-сховища в браузері, який дозволяє зберігати дані локально на комп'ютері користувача
 //властивість localStorage https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
