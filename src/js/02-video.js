@@ -9,39 +9,41 @@
 import Player from '@vimeo/player';
 import throttle from 'lodash/throttle';
 
-const iframe = document.getElementById('vimeo-player');
-const player = new Player(iframe); 
-const onTimeupdate = throttle(function (data) {
-  localStorage.setItem('videoplayer-current-time', data.seconds);
-}, 1000); 
-player.on('timeupdate', onTimeupdate);
+document.addEventListener('DOMContentLoaded', function () {
+  const iframe = document.getElementById('vimeo-player');
+  const player = new Player(iframe);
+  const onTimeupdate = throttle(function (data) {
+    localStorage.setItem('videoplayer-current-time', data.seconds);
+  }, 1000);
+  player.on('timeupdate', onTimeupdate);
 
-const savedTime = localStorage.getItem('videoplayer-current-time');
-if (savedTime !== null) {
-  const savedTimeFloat = parseFloat(savedTime);
-  player
-    .setCurrentTime(savedTimeFloat)
-    .then(function (seconds) {
-      console.log(
-        `${Math.floor(seconds / 3600)
-          .toString()
-          .padStart(2, '0')}:${Math.floor((seconds % 3600) / 60)
-          .toString()
-          .padStart(2, '0')}:${Math.floor(seconds % 60)
-          .toString()
-          .padStart(2, '0')}`
-      );
-    })
-    .catch(function (error) {
-      switch (error.name) {
-        case 'RangeError':
-          console.error(
-            'Помилка: час відтворення знаходиться поза допустимими межами'
-          );
-          break;
-        default:
-          console.error('Сталася невідома помилка');
-          break;
-      }
-    });
-}
+  const savedTime = localStorage.getItem('videoplayer-current-time');
+  if (savedTime !== null) {
+    const savedTimeFloat = parseFloat(savedTime);
+    player
+      .setCurrentTime(savedTimeFloat)
+      .then(function (seconds) {
+        console.log(
+          `${Math.floor(seconds / 3600)
+            .toString()
+            .padStart(2, '0')}:${Math.floor((seconds % 3600) / 60)
+            .toString()
+            .padStart(2, '0')}:${Math.floor(seconds % 60)
+            .toString()
+            .padStart(2, '0')}`
+        );
+      })
+      .catch(function (error) {
+        switch (error.name) {
+          case 'RangeError':
+            console.error(
+              'Помилка: час відтворення знаходиться поза допустимими межами'
+            );
+            break;
+          default:
+            console.error('Сталася невідома помилка');
+            break;
+        }
+      });
+  }
+});

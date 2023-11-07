@@ -8,12 +8,17 @@ import throttle from 'lodash/throttle';
 const FORM_ID = 'feedback-form-state';
 const feedbackForm = document.querySelector('.feedback-form');
 const { email, message } = feedbackForm.elements;
+
+// отримвти дані з локального сховища або створити порожній об'єкт
 let feedbackData = JSON.parse(localStorage.getItem(FORM_ID)) || {};
 
+// відновлення даних на сторінці після завантаження
 reloadPage();
 
 window.addEventListener('load', () => {
+  // отримуємо дані з локального сховища при завантаженні сторінки
   const localStorageData = JSON.parse(localStorage.getItem(FORM_ID)) || {};
+  // якщо дані є, то записуємо їх у поле форми
   localStorageData.email && (email.value = localStorageData.email);
   localStorageData.message && (message.value = localStorageData.message);
 });
@@ -21,13 +26,13 @@ window.addEventListener('load', () => {
 feedbackForm.addEventListener('input', throttle(onInputData, 500));
 feedbackForm.addEventListener('submit', onFormSubmit);
 function onInputData() {
-  // Якщо поля email або message заповнені, оновити об'єкт feedbackData
+  // якщо поля email або message заповнені, оновити об'єкт feedbackData
   if (email.value || message.value) {
     feedbackData = {
       email: email.value,
       message: message.value,
     };
-    // Зберегти об'єкт feedbackData в локальному сховищі
+    // та зберегти об'єкт feedbackData в локальному сховищі
     localStorage.setItem(FORM_ID, JSON.stringify(feedbackData));
   }
 }
