@@ -17,9 +17,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }, 1000);
   player.on('timeupdate', onTimeupdate);
 
-  const savedTime = localStorage.getItem('videoplayer-current-time');
-  if (savedTime !== null) {
-    const savedTimeFloat = parseFloat(savedTime);
+  const savedTime_ID = localStorage.getItem('videoplayer-current-time');
+  if (savedTime_ID !== null) {
+    const savedTimeFloat = parseFloat(savedTime_ID);
     player
       .setCurrentTime(savedTimeFloat)
       .then(function (seconds) {
@@ -46,4 +46,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
   }
+});
+// Відключити favicon.ico
+document.addEventListener('DOMContentLoaded', function () {
+  var link =
+    document.querySelector("link[rel*='icon']") ||
+    document.createElement('link');
+  link.type = 'image/x-icon';
+  link.rel = 'shortcut icon';
+  link.href = 'data:image/x-icon;,';
+  document.getElementsByTagName('head')[0].appendChild(link);
 });
